@@ -19,6 +19,11 @@ const io = new Server(server, {
 // Middleware
 app.use(cors());
 app.use(express.json());
+// Make io accessible in routes
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
 
 // Test route
 app.get("/", (req, res) => {
@@ -28,6 +33,8 @@ app.get("/", (req, res) => {
 // Routes
 const authRoutes = require("./routes/authRoutes");
 app.use("/api/auth", authRoutes);
+const incidentRoutes = require("./routes/incidentRoutes");
+app.use("/api/incidents", incidentRoutes);
 
 // Socket.io connection
 io.on("connection", (socket) => {
