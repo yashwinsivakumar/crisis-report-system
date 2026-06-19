@@ -25,6 +25,10 @@ app.get("/", (req, res) => {
   res.send("Crisis Report API is running ✅");
 });
 
+// Routes
+const authRoutes = require("./routes/authRoutes");
+app.use("/api/auth", authRoutes);
+
 // Socket.io connection
 io.on("connection", (socket) => {
   console.log("A user connected:", socket.id);
