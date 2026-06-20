@@ -109,7 +109,7 @@ const deleteIncident = async (req, res) => {
     res.json({ message: "Incident removed" });
   } catch (error) {
     res.status(500).json({ message: error.message });
-  }
+  } 
 };
 
 // @desc    Get incident statistics
