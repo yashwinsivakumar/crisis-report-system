@@ -16,7 +16,7 @@ import MyReports from "./pages/citizen/MyReports";
 // Admin Pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import IncidentList from "./pages/admin/IncidentList";
-import IncidentDetail from "./pages/admin/IncidentDetail";
+import IncidentDetail from "./pages/admin/IncidentDetail"; 
 
 // Protected Route
 const ProtectedRoute = ({ children, adminOnly }) => {
