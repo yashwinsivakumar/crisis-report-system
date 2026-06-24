@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import Notification from "./components/Notification";
 
 // Auth Pages
 import Login from "./pages/auth/Login";
@@ -12,6 +13,7 @@ import CitizenDashboard from "./pages/citizen/CitizenDashboard";
 import ReportIncident from "./pages/citizen/ReportIncident";
 import MapView from "./pages/citizen/MapView";
 import MyReports from "./pages/citizen/MyReports";
+import Alerts from "./pages/citizen/Alerts";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -48,6 +50,7 @@ function AppRoutes() {
       <Route path="/report" element={<ProtectedRoute><ReportIncident /></ProtectedRoute>} />
       <Route path="/map" element={<ProtectedRoute><MapView /></ProtectedRoute>} />
       <Route path="/my-reports" element={<ProtectedRoute><MyReports /></ProtectedRoute>} />
+      <Route path="/alerts" element={<ProtectedRoute><Alerts /></ProtectedRoute>} />
 
       {/* Admin Routes */}
       <Route path="/admin" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
@@ -65,6 +68,7 @@ function App() {
     <AuthProvider>
       <Router>
         <Toaster position="top-right" />
+        <Notification />
         <AppRoutes />
       </Router>
     </AuthProvider>

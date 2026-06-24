@@ -35,10 +35,18 @@ const authRoutes = require("./routes/authRoutes");
 app.use("/api/auth", authRoutes);
 const incidentRoutes = require("./routes/incidentRoutes");
 app.use("/api/incidents", incidentRoutes);
+const alertRoutes = require("./routes/alertRoutes");
+app.use("/api/alerts", alertRoutes);
 
 // Socket.io connection
 io.on("connection", (socket) => {
   console.log("A user connected:", socket.id);
+
+  // Handle emergency alert from admin
+  socket.on("emergencyAlert", (alert) => {
+    console.log("Emergency alert broadcasted:", alert.title);
+    io.emit("emergencyAlert", alert);
+  });
 
   socket.on("disconnect", () => {
     console.log("User disconnected:", socket.id);

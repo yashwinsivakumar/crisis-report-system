@@ -25,6 +25,7 @@ const Navbar = () => {
         { path: "/report", label: "Report" },
         { path: "/map", label: "Map" },
         { path: "/my-reports", label: "My Reports" },
+        { path: "/alerts", label: "Alerts" },
       ];
 
   return (

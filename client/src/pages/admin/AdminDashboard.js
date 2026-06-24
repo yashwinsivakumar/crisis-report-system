@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import api from "../../utils/api";
 import toast from "react-hot-toast";
+import socket from "../../utils/socket";
 import {
   BarChart,
   Bar,
@@ -34,6 +35,7 @@ const COLORS = ["#3b82f6", "#ef4444", "#f59e0b", "#f97316", "#8b5cf6", "#6b7280"
 const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
   const [recentIncidents, setRecentIncidents] = useState([]);
+  const [alerts, setAlerts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [alertForm, setAlertForm] = useState({ title: "", message: "" });
   const [alertLoading, setAlertLoading] = useState(false);
@@ -41,6 +43,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     fetchData();
+    fetchAlerts();
   }, []);
 
   const fetchData = async () => {
@@ -55,6 +58,25 @@ const AdminDashboard = () => {
       toast.error("Failed to load dashboard data");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchAlerts = async () => {
+    try {
+      const { data } = await api.get("/api/alerts");
+      setAlerts(data);
+    } catch (error) {
+      console.error("Failed to load alerts");
+    }
+  };
+
+  const handleDeleteAlert = async (id) => {
+    try {
+      await api.delete(`/api/alerts/${id}`);
+      toast.success("Alert deleted ✅");
+      fetchAlerts();
+    } catch (error) {
+      toast.error("Failed to delete alert");
     }
   };
 
@@ -159,6 +181,27 @@ const AdminDashboard = () => {
                   Cancel
                 </button>
                 <button
+                onClick={async () => {
+  if (!alertForm.title || !alertForm.message) {
+    toast.error("Please fill in all fields");
+    return;
+  }
+  setAlertLoading(true);
+  try {
+    await api.post("/api/alerts", {
+      title: alertForm.title,
+      message: alertForm.message,
+      severity: "Warning",
+    });
+    toast.success("Alert broadcasted and saved! 🚨");
+    setAlertForm({ title: "", message: "" });
+    setShowAlertForm(false);
+  } catch (error) {
+    toast.error("Failed to send alert");
+  } finally {
+    setAlertLoading(false);
+  }
+}}
                   disabled={alertLoading}
                   className="flex-1 bg-red-500 text-white py-2 rounded-xl font-semibold hover:bg-red-600 transition disabled:opacity-50"
                 >
@@ -298,6 +341,61 @@ const AdminDashboard = () => {
                   </span>
                 </div>
               ))
+            )}
+          </div>
+        </div>
+
+        {/* Active Alerts Section */}
+        <div className="mt-8 bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+          <div className="flex items-center justify-between p-6 border-b border-slate-100">
+            <h3 className="font-bold text-slate-800">🔔 Active Alerts</h3>
+            <span className="text-sm font-medium text-slate-500">
+              {alerts.length} active
+            </span>
+          </div>
+
+          <div className="p-6">
+            {alerts.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-4xl mb-3">🔕</p>
+                <p className="text-slate-500">No active alerts</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {alerts.map((alert) => (
+                  <div
+                    key={alert._id}
+                    className="flex items-start justify-between gap-4 p-4 rounded-2xl border border-amber-100 bg-amber-50"
+                  >
+                    <div className="flex items-start gap-3 min-w-0">
+                      <div className="text-2xl flex-shrink-0">⚠️</div>
+                      <div className="min-w-0">
+                        <h4 className="font-semibold text-amber-900">
+                          {alert.title}
+                        </h4>
+                        <p className="text-sm text-amber-800 mt-1 break-words">
+                          {alert.message}
+                        </p>
+                        <p className="text-xs text-amber-700 mt-2">
+                          🕐 {new Date(alert.createdAt).toLocaleString("en-US", {
+                            day: "numeric",
+                            month: "short",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </p>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => handleDeleteAlert(alert._id)}
+                      className="text-xs px-3 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg font-medium transition flex-shrink-0"
+                    >
+                      🗑 Remove
+                    </button>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         </div>

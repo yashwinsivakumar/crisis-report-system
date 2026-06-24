@@ -123,7 +123,7 @@ const CitizenDashboard = () => {
             { label: "Report", icon: "🚨", path: "/report", color: "bg-red-500" },
             { label: "Map View", icon: "🗺️", path: "/map", color: "bg-blue-500" },
             { label: "My Reports", icon: "📋", path: "/my-reports", color: "bg-purple-500" },
-            { label: "Alerts", icon: "🔔", path: "/dashboard", color: "bg-amber-500" },
+            { label: "Alerts", icon: "🔔", path: "/alerts", color: "bg-amber-500" },
           ].map((action) => (
             <Link
               key={action.path}
